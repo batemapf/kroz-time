@@ -9,7 +9,8 @@ createServer(async (req, res) => {
     if (path !== root && !path.startsWith(root + sep)) throw new Error('path');
     const file = path === root ? resolve(root, 'index.html') : path;
     if (!types[extname(file)]) throw new Error('file');
+    const contents = await readFile(file);
     res.writeHead(200, { 'Content-Type': types[extname(file)], 'Cache-Control': 'no-cache' });
-    res.end(await readFile(file));
+    res.end(contents);
   } catch { res.writeHead(404); res.end('Not found'); }
 }).listen(Number(process.env.PORT || 4173), '0.0.0.0', () => console.log('Kroz listening on port ' + (process.env.PORT || 4173)));

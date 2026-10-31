@@ -1,14 +1,14 @@
 const $=id=>document.getElementById(id);
 const frame=$('emulator');let ready=false,frozen=false,launched=false,loadTimer;
 const held=new Set();
-const send=(type,details={})=>frame.contentWindow?.postMessage({source:'kroz-shell',type,...details},location.origin);
+const send=(type,details={})=>{if(frame.contentWindow)frame.contentWindow.postMessage({source:'kroz-shell',type,...details},location.origin);};
 function focusGame(){send('focus');frame.focus({preventScroll:true});}
 function releaseAll(){for(const code of held)send('key',{code,pressed:false});held.clear();}
 function setFrozen(value){if(!ready)return;releaseAll();frozen=value;send(value?'freeze':'resume');$('frozen').hidden=!value;$('pause').textContent=value?'▶ Resume emulator':'Ⅱ Pause emulator';$('runtime-status').textContent=value?'PAUSED — YOUR PROGRESS IS SAFE.':'ORIGINAL DOS GAME · RUNNING';if(!value)focusGame();}
 function fail(message){clearTimeout(loadTimer);ready=false;$('boot').hidden=false;frame.hidden=true;$('launch').disabled=false;$('launch').textContent='↻ RETRY BOOT';$('load-status').textContent='Unable to start: '+message;$('power').textContent='● ERROR';for(const id of ['pause','reboot'])$(id).disabled=true;}
 function launch(){
  if(launched&&ready)return;launched=true;ready=false;$('launch').disabled=true;$('launch').textContent='BOOTING DOS…';$('load-status').textContent='Loading the self-hosted emulator and original game…';$('power').textContent='● BOOTING';
- frame.src='./player.html';frame.hidden=false;
+ frame.src='./player.html?v=2.0.1';frame.hidden=false;
  loadTimer=setTimeout(()=>fail('loading timed out. Check your connection and try again.'),45000);
 }
 $('launch').addEventListener('click',launch);

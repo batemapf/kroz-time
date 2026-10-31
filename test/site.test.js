@@ -4,7 +4,8 @@ import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
-import {pauseController} from '../src/pause.js';
+await import('../src/pause.js');
+const pauseController = globalThis.KrozPauseController;
 
 test('vendored emulator, original game and corresponding source archives match pinned hashes',async()=>{
  const integrity=JSON.parse(await readFile(new URL('../vendor/integrity.json',import.meta.url)));
